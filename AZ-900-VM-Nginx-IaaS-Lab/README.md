@@ -52,5 +52,5 @@ During the execution of the 'az vm create' command, I encountered the **SkuNotAv
 
 To ensure this VM does not incur ongoing costs, I use the Resource Group deletion command:
 
-# Deletes IntroAzureRG, including the VM, disk, IP address, and all associated costs.
+### Deletes IntroAzureRG, including the VM, disk, IP address, and all associated costs.
 az group delete --name IntroAzureRG --no-wait -y
