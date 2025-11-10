@@ -73,3 +73,4 @@ sleep 10
 echo "------------------------------------------------------------------------------------------------------"
 echo "VERIFICATION COMPLETE: Web server access confirmed via port 80."
 echo "CLEANUP INSTRUCTIONS: Delete the Resource Group '$RG_NAME' via the Azure portal to avoid costs."
+    az group delete --name IntroAzureRG --no-wait -y
