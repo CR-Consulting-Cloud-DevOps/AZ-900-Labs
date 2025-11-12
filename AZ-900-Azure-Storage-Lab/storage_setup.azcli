@@ -1,0 +1,34 @@
+#!/bin/bash
+# Script: storage_setup.azcli
+# Objectif: Creer et configurer le compte de stockage pour le Labo 3 (AZ-900)
+# Auteur: [Votre Nom]
+
+# --- Variables de configuration ---
+# Le nom du stockage doit être UNIQUE au niveau mondial
+RG_NAME="IntroAzureRG" 
+LOCATION="westeurope"
+STORAGE_NAME="monstockagecrema123"
+CONTAINER_NAME="images-labo"
+
+# 1. Creation du Groupe de Ressources
+echo "1. Creation du groupe de ressources $RG_NAME..."
+az group create --name $RG_NAME --location $LOCATION
+
+# 2. Creation du Compte de Stockage (Standard, LRS)
+echo "2. Creation du compte de stockage $STORAGE_NAME..."
+az storage account create \
+    --resource-group $RG_NAME \
+    --name $STORAGE_NAME \
+    --location $LOCATION \
+    --sku Standard_LRS \
+    --kind StorageV2 \
+    --allow-blob-public-access true
+
+# 3. Creation du conteneur Blob (Private par defaut)
+echo "3. Creation du conteneur $CONTAINER_NAME..."
+az storage container create \
+    --account-name $STORAGE_NAME \
+    --name $CONTAINER_NAME \
+    --public-access off
+
+echo "Configuration de l'infrastructure terminee."
