@@ -1,0 +1,41 @@
+#!/bin/bash
+# File: deploy.azcli
+# Purpose: Create and configure the Azure Storage Account for Lab 3 (AZ-900).
+
+# --- Configuration Variables ---
+RG_NAME="StorageLabRG"
+LOCATION="westeurope"
+# NOTE: Storage account name must be globally unique and lowercase. We append a random hex to ensure uniqueness.
+STORAGE_NAME="mystoragecrema$(openssl rand -hex 4)"
+CONTAINER_NAME="pictures-lab"
+
+# 1. Create Resource Group
+echo "1. Creating Resource Group $RG_NAME..."
+az group create --name $RG_NAME --location $LOCATION
+
+# 2. Create Storage Account (Standard, LRS)
+echo "2. Creating Storage Account $STORAGE_NAME..."
+az storage account create \
+    --resource-group $RG_NAME \
+    --name $STORAGE_NAME \
+    --location $LOCATION \
+    --sku Standard_LRS \
+    --kind StorageV2 \
+    --allow-blob-public-access true
+
+# 3. Create Blob Container (Private by default)
+echo "3. Creating Container $CONTAINER_NAME..."
+az storage container create \
+    --account-name $STORAGE_NAME \
+    --name $CONTAINER_NAME \
+    --public-access off
+
+# 3b. DEMONSTRATION : Change Public Access Level to 'Blob' (Read-Only access for blobs)
+echo "3b. Changing Container Public Access to 'Blob' (Read-Only)..."
+az storage container set-permission \
+    --account-name $STORAGE_NAME \
+    --name $CONTAINER_NAME \
+    --public-access blob
+
+echo "Infrastructure configuration complete."
+echo "Storage Account Name: $STORAGE_NAME"

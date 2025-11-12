@@ -1,0 +1,13 @@
+#!/bin/bash
+# File: destroy.azcli
+# Objective: Delete the Resource Group created for the Storage Lab.
+
+# --- Configuration Variables ---
+RG_NAME="StorageLabRG" 
+
+# 1. Delete Resource Group
+echo "--- CLEANUP START ---"
+echo "1. Deleting Resource Group $RG_NAME..."
+az group delete --name $RG_NAME --yes --no-wait
+
+echo "Cleanup initiated. Resources will be deleted shortly."
