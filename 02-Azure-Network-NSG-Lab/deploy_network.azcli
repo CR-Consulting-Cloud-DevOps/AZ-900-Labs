@@ -1,0 +1,69 @@
+#!/bin/bash
+# File: deploy_network.azcli
+# Purpose: Diagnose and fix the Network Security Group (NSG) challenge on the Lab 01 VM.
+# Prerequisite: VM 'my-vm' must be deployed and running Nginx via Lab 01.
+
+# --- 0. Variables for Consistency ---
+RG_NAME="VMLabRG" 
+VM_NAME="my-vm"
+NSG_NAME="my-vmNSG"
+
+# --- Task 1: Access your web server (Initial Failure) ---
+echo "--- 1. DIAGNOSTICS: Attempting Web Access to demonstrate initial failure ---"
+
+# 1a. Get IP Address
+IPADDRESS="$(az vm list-ip-addresses \
+            --resource-group "$RG_NAME" \
+            --name $VM_NAME \
+            --query "[].virtualMachine.network.publicIpAddresses[*].ipAddress" \
+            --output tsv)"
+
+echo "VM Public IP Address: $IPADDRESS"
+
+# 1b. Attempt to access the web server (Expected: Timeout)
+echo "Attempting to access web server on Port 80 (Expected: Timeout)..."
+curl --connect-timeout 5 http://$IPADDRESS
+
+# --- Task 2: List current NSG rules ---
+echo ""
+echo "--- 2. DIAGNOSTICS: Listing NSG Rules to identify the block ---"
+
+echo "Current NSG Rules (Note Port 80 is blocked by the implicit DenyAll rule):"
+az network nsg rule list \
+    --resource-group "$RG_NAME" \
+    --nsg-name $NSG_NAME \
+    --query '[].{Name:name, Priority:priority, Port:destinationPortRange, Access:access}' \
+    --output table
+
+# --- Task 3: Create the network security rule (The Fix) ---
+echo "--- 3. SOLUTION: Creating NSG rule 'allow-http' to open Port 80 ---"
+
+# 3a. Create the new rule to allow inbound access on port 80 with high priority (100)
+az network nsg rule create \
+    --resource-group "$RG_NAME" \
+    --nsg-name $NSG_NAME \
+    --name allow-http \
+    --protocol tcp \
+    --priority 100 \
+    --destination-port-range 80 \
+    --access Allow
+
+# 3b. Verification of the new rules
+echo "Rules updated. New Rule List (Note priority 100 rule is now present):"
+az network nsg rule list \
+    --resource-group "$RG_NAME" \
+    --nsg-name $NSG_NAME \
+    --query '[].{Name:name, Priority:priority, Port:destinationPortRange, Access:access}' \
+    --output table
+
+# --- Task 4: Access your web server again (Verification) ---
+echo "--- 4. VERIFICATION: Retrying Web Access (Expected: Success message) ---"
+
+# Pause to allow the NSG rule to fully propagate
+sleep 10
+
+# Retry the curl command (Expected: Success message)
+curl --connect-timeout 5 http://$IPADDRESS
+
+echo "------------------------------------------------------------------------------------------------------"
+echo "VERIFICATION COMPLETE: Web server access confirmed via port 80."

@@ -1,0 +1,21 @@
+#!/bin/bash
+# Script: destroy_network.azcli
+# Objective: Delete the specific NSG rule added by this lab to revert to the initial secure state.
+
+# --- Configuration Variables (Must match Lab 01) ---
+RG_NAME="VMLabRG" 
+NSG_NAME="my-vmNSG"
+RULE_NAME="allow-http"
+
+echo "--- LAB 02 DESTRUCTION ---"
+echo "1. Deleting NSG rule '$RULE_NAME' in Resource Group '$RG_NAME'..."
+
+# Delete the NSG rule
+az network nsg rule delete \
+    --resource-group $RG_NAME \
+    --nsg-name $NSG_NAME \
+    --name $RULE_NAME \
+    --output none
+
+echo "NSG rule '$RULE_NAME' deleted. The VM is no longer accessible via HTTP (Port 80)."
+echo "To delete the complete VM and Resource Group, use the Lab 01 destroy script: bash ../01-Azure-VM-Nginx-Lab/destroy.azcli"
