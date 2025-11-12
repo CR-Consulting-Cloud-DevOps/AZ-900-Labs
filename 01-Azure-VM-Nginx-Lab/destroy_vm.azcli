@@ -1,0 +1,12 @@
+#!/bin/bash
+# Script: destroy_vm.azcli
+# Objective: Delete the Resource Group created for the VM lab.
+
+# --- Configuration Variables ---
+RG_NAME="VMLabRG" # MUST MATCH THE DEPLOY SCRIPT
+
+# 1. Delete Resource Group
+echo "1. Deleting Resource Group $RG_NAME..."
+az group delete --name $RG_NAME --yes --no-wait
+
+echo "Cleanup initiated. Resources will be deleted shortly."

@@ -1,0 +1,51 @@
+#!/bin/bash
+# File: deploy_vm.azcli
+# Purpose: Deployment script for a Linux VM (Ubuntu) with Nginx (IaaS)
+
+# --- 0. Variables for Consistency ---
+RG_NAME="VMLabRG"
+LOCATION="westeurope"
+VM_NAME="my-vm"
+ADMIN_USERNAME="azureuser"
+CUSTOM_SCRIPT_URL="https://raw.githubusercontent.com/MicrosoftDocs/mslearn-welcome-to-azure/master/configure-nginx.sh"
+
+# --- Task 1: Create Resource Group ---
+echo "--- 1. Creating Resource Group: $RG_NAME ---"
+az group create \
+    --name $RG_NAME \
+    --location $LOCATION
+
+# --- Task 2: Create Linux VM ---
+echo "--- 2. Creating Linux VM '$VM_NAME' with Ubuntu2204 ---"
+az vm create \
+    --resource-group $RG_NAME \
+    --name $VM_NAME \
+    --size Standard_B1s \
+    --public-ip-sku Standard \
+    --image Ubuntu2204 \
+    --admin-username $ADMIN_USERNAME \
+    --location $LOCATION \
+    --generate-ssh-keys
+
+# --- Task 3: Install Nginx via Custom Script Extension ---
+echo "--- 3. Installing Nginx (IaaS responsibility) via custom Script Extension ---"
+az vm extension set \
+    --resource-group $RG_NAME \
+    --vm-name $VM_NAME \
+    --name customScript \
+    --publisher Microsoft.Azure.Extensions \
+    --version 2.1 \
+    --settings "{\"fileUris\":[\"$CUSTOM_SCRIPT_URL\"]}" \
+    --protected-setting "{\"commandToExecute\": \"./configure-nginx.sh\"}"
+
+# --- Task 4: Open Port 80 (HTTP) ---
+echo "--- 4. Opening Port 80 (HTTP) via Network Security Group (NSG) ---"
+az vm open-port --resource-group $RG_NAME --name $VM_NAME --port 80 --priority 100
+
+echo "--- DEPLOYMENT COMPLETE ---"
+
+# Retrieve Public IP Address for verification
+IP_ADDRESS=$(az vm show --resource-group $RG_NAME --name $VM_NAME --query "publicIpAddress" --output tsv)
+
+echo "VM's Public IP Address: http://$IP_ADDRESS"
+echo "--- Verification: Check http://$IP_ADDRESS ---"
