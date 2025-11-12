@@ -1,21 +1,21 @@
 #!/bin/bash
 # Script: storage_setup.azcli
-# Objectif: Creer et configurer le compte de stockage pour le Labo 3 (AZ-900)
-# Auteur: [Votre Nom]
+# Objectif: Create and configure the Storage Account for Lab 3 (AZ-900)
+# Auteur: Christophe Remacle
 
-# --- Variables de configuration ---
-# Le nom du stockage doit être UNIQUE au niveau mondial
+# --- Configuration Variables ---
+# NOTE: Storage account name must be globally unique
 RG_NAME="IntroAzureRG" 
 LOCATION="westeurope"
-STORAGE_NAME="monstockagecrema123"
-CONTAINER_NAME="images-labo"
+STORAGE_NAME="mystoragecrema123"
+CONTAINER_NAME="pictures-lab"
 
-# 1. Creation du Groupe de Ressources
-echo "1. Creation du groupe de ressources $RG_NAME..."
+# 1. Create Resource Group
+echo "1. Creating Resource Group $RG_NAME..."
 az group create --name $RG_NAME --location $LOCATION
 
-# 2. Creation du Compte de Stockage (Standard, LRS)
-echo "2. Creation du compte de stockage $STORAGE_NAME..."
+# 2. Create Storage Account (Standard, LRS)
+echo "2. Creating Storage Account $STORAGE_NAME..."
 az storage account create \
     --resource-group $RG_NAME \
     --name $STORAGE_NAME \
@@ -24,11 +24,11 @@ az storage account create \
     --kind StorageV2 \
     --allow-blob-public-access true
 
-# 3. Creation du conteneur Blob (Private par defaut)
-echo "3. Creation du conteneur $CONTAINER_NAME..."
+# 3. Create Blob Container (Private by default)
+echo "3. Creating Container $CONTAINER_NAME..."
 az storage container create \
     --account-name $STORAGE_NAME \
     --name $CONTAINER_NAME \
     --public-access off
 
-echo "Configuration de l'infrastructure terminee."
+echo "Infrastructure configuration complete."
