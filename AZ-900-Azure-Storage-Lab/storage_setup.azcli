@@ -31,4 +31,19 @@ az storage container create \
     --name $CONTAINER_NAME \
     --public-access off
 
+# 3b. DEMONSTRATION : Change Public Access Level to 'Blob' (Read-Only access for blobs)
+echo "3b. Changing Container Public Access to 'Blob' (Read-Only)..."
+az storage container set-permission \
+    --account-name $STORAGE_NAME \
+    --name $CONTAINER_NAME \
+    --public-access blob
+
 echo "Infrastructure configuration complete."
+
+echo "Infrastructure configuration complete."
+
+# --- Clean Up / Nettoyage ---
+echo "4. Deleting Resource Group $RG_NAME..."
+az group delete --name $RG_NAME --yes --no-wait
+
+echo "Cleanup initiated. Resources will be deleted shortly."
