@@ -18,7 +18,7 @@ The core task was to provision a complete, functional web server environment fro
 
 ## My Technical Approach
 
-I used a single, repeatable Bash script ('deploy.sh') that groups the Azure CLI commands, turning the manual exercise into an tomated deployment.
+I used a single, repeatable Bash script ('deploy_vm.azcli') that groups the Azure CLI commands, turning the manual exercise into an tomated deployment.
 
 ### How I Implemented It
 
@@ -44,13 +44,13 @@ During the execution of the 'az vm create' command, I encountered the **SkuNotAv
 
 | Problem Encountered | Solution Implemented |
 | :-- | :-- |
-| The command failed because the default requested VM size (SKU) was **temporarily out of capacity** in the chosen region ('westeurope'). | I **explicitly set the VM size to 'Standard_B1s'** in the 'deploy.sh' script, which is less in demand, resolving the resource constraint issue. |
+| The command failed because the default requested VM size (SKU) was **temporarily out of capacity** in the chosen region ('westeurope'). | I **explicitly set the VM size to 'Standard_B1s'** in the 'deploy_vm.azcli' script, which is less in demand, resolving the resource constraint issue. |
 
 **Takeaway:** This confirmed confirmed that even with IaC, the user must handle capacity constraints by selecting appropriate VM sizes and regions.
 
 ## Cost Management & Clean-Up
 
-To ensure this VM does not incur ongoing costs, I use the Resource Group deletion command:
+To ensure this VM does not incur ongoing costs, I use the Resource Group deletion command in the destroy.azcli script, which deletes the VMLabRG, including the VM, disk, IP address, and all associated resources.
 
-### Deletes IntroAzureRG, including the VM, disk, IP address, and all associated costs.
-az group delete --name IntroAzureRG --no-wait -y
+### Deletes VMLabRG, including the VM, disk, IP address, and all associated costs.
+az group delete --name VMLabRG --no-wait -y
