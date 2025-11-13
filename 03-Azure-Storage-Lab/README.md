@@ -19,7 +19,7 @@ The core task was to deploy and configure a globally accessible storage solution
 
 ## My Technical Approach
 
-I used a single, repeatable Bash script (`deploy.azcli`) to sequence the Azure CLI commands required for provisioning the entire storage infrastructure.
+I used a single, repeatable Bash script (`deploy_storage.azcli`) to sequence the Azure CLI commands required for provisioning the entire storage infrastructure.
 
 ### How I Implemented It
 
@@ -51,7 +51,7 @@ The primary technical constraint in this lab is the **global uniqueness** of the
 
 ## Cost Management & Clean-Up
 
-To ensure no residual costs remain, the separate `destroy.azcli` script is used:
+To ensure no residual costs remain, the separate `destroy_storage.azcli` script is used:
 
 ### Deletes the StorageLabRG, including the Storage Account, its containers, all stored data, and associated costs.
 ```bash
