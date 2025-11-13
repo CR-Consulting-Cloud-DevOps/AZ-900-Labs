@@ -19,7 +19,7 @@ The core task was to ensure network accessibility to the already-deployed web se
 
 ## My Technical Approach
 
-I used a single, repeatable Bash script ('deploy-network.sh') that groups the Azure CLI commands to handle the diagnostic and correction cycle.
+I used a single, repeatable Bash script ('deploy_network.azcli') that groups the Azure CLI commands to handle the diagnostic and correction cycle.
 
 ### How I Implemented It
 
@@ -55,5 +55,5 @@ I completed this lab **without encountering any technical errors**, proving the 
 
 To ensure this deployment does not incur ongoing costs, I use the Resource Group deletion command:
 
-### Deletes IntroAzureRG, including the VM, disk, IP address, NSG, and all associated costs.
-az group delete --name IntroAzureRG --no-wait -y
+### Deletes VMLabRG, including the VM, disk, IP address, NSG, and all associated costs.
+az group delete --name VMLabRG --no-wait -y
